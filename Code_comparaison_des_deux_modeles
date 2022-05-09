@@ -51,6 +51,6 @@ fig, graph = plt.subplots()
 graph.plot(x1,y1a, 'k--', label='Taux de proies consommées pour le modèle de Gause')
 graph.plot(x1,y1b, 'black', label='Taux de proies consommées pour le modèle de Rosenzweig-McArthur')
 graph.set_xlabel('Proies')
-graph.set_ylabel('Prédateurs')
+graph.set_ylabel('Proies consommées')
 graph.legend(title= 'Légende',bbox_to_anchor =(1.05, 1.3), ncol = 1)
 
