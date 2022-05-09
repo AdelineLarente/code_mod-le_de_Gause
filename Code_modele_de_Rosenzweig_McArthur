@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May  2 13:58:44 2022
+
+@author: adelinelarente
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+#from scipy.optimize import fsolve
+
+
+# Variables___________________________________________________________________
+tmax=500 
+#durée maximum de la simulation 
+
+dt = 0.01
+#pas de temps d'échantillonnage de la solution cherchée
+
+duree=list(np.arange(0,tmax,dt)); 
+#liste des temps d'échantillonnage
+
+x0=1;y0=1 
+#conditions initiales pour les proies et les prédateurs 
+#(on commence avec 1 proie et 1 prédateur)
+
+r=1;K=1;a=1;b=1;e=0.5;m=1.1
+#fixe les valeurs des paramètres du modèle
+
+# Modèles_____________________________________________________________________
+
+def fonctions_rosenzweig_mcarthur(t,u): 
+    #Il faut imposer le temps pour les autres fonctions 
+    global r,K,a,b,e,m    
+    x=u[0];y=u[1];  
+    
+    dx = r*x*(1-(x/K)) - (a*x*y)/(1+b*x) 
+    #Equation de la proie
+    
+    dy = (e*a*x*y)/(1+b*x)-m*y          
+    #Equation du prédateur
+    
+    return [dx, dy]                                
+                      
+
+
+# Isoclines___________________________________________________________________
+
+def fonctions_rosenzweig_mcarthur_isoclines(x):
+    
+    global r,K,a,b,e,m  
+    
+    y= (r/a)*((1+b*x)*(1-x/K))
+    
+    return y
+
+
+# Plots_______________________________________________________________________
+
+CI=[x0,y0]
+#conditions initales dans une liste nommée CI
+
+sol=solve_ivp(fonctions_rosenzweig_mcarthur,[0,tmax],CI,t_eval=duree) 
+
+t=sol.t
+x=sol.y[0,:];y=sol.y[1,:];
+
+x1=list(np.arange(0,1,0.01))
+y1=[]
+for xx in x1:
+    yy=fonctions_rosenzweig_mcarthur_isoclines(xx)
+    y1=y1+[yy]
+x2=[m/(e*a-m*b),m/(e*a-m*b)];y2=[0 ,1.5]
+
+
+# Représentation des variables en fonction du temps
+fig, graph1=plt.subplots()
+graph1.plot(t,x,'purple', LineWidth=0.5)
+graph1.plot(t,y, 'blue',LineWidth=0.5)
+graph1.set_xlabel('Temps')
+graph1.set_ylabel('Abondance des populations')
+#graph1.set_title('Graphique 1')
+
+# Représentation dans l'espace des phases
+fig, graph2 = plt.subplots()
+graph2.plot(x,y,x1,y1,'k--',x2,y2,'k--',LineWidth=0.5)
+graph2.set_xlabel('Proies')
+graph2.set_ylabel('Prédateurs')
+#graph2.set_title('Graphique 2')
+
